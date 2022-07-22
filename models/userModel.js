@@ -4,6 +4,7 @@ const database = [
     name: "Jimmy Smith",
     email: "jimmy123@gmail.com",
     password: "jimmy123!",
+    isAdmin: true
   },
   {
     id: 2,
@@ -32,7 +33,9 @@ const userModel = {
     if (user) {
       return user;
     }
-    throw new Error(`Couldn't find user with id: ${id}`);
+    console.log(`User id ${id} not found.`);
+    return null;
+    //throw new Error(`Couldn't find user with id: ${id}`);
   },
   createUserWithGithubId: (profile) => {
     const user = {

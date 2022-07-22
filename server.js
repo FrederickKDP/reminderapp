@@ -46,6 +46,28 @@ app.use((req, res, next) => {
 
   console.log(`Session details are: `);
   console.log(req.session.passport);
+
+  console.log(`The cookies are: `);
+
+  // const getKeys = (callback)=>{
+  //   const keys = [];
+  //   req.sessionStore.all((err, s)=>{
+  //     Object.keys(s).forEach((key, index) => {
+  //         console.log('something'+key);
+  //         console.log(key);
+  //         console.log(index);
+  //         keys.push(key);
+
+  //         //if(index-1 >= s.length){
+  //         //};
+  //         callback(null, keys);
+  //       });    
+  //   });
+  // };
+
+  // getKeys((err, keys)=>{
+  //   console.log(keys);
+  // });
   next();
 });
 
@@ -58,7 +80,35 @@ app.use("/auth", authRoute);
 {
   const { ensureAuthenticated, isAdmin } = require("./middleware/checkAuth");
   app.get("/reminders", ensureAuthenticated, reminderController.list);
+  app.get("/admin", isAdmin, (req, res)=>
+  {
+    // const keys = req.sessionStore.all((err, s)=>{
+    //   if(err){
+    //     return null;
+    //   }
+    //   if(s){
+    //     return Object.keys(s);
+    //   }
+    // });
+
+    // Clean undefined
+
+    //const sessions = keys.forEach((item)=>{ if(item){return item}});
+
+    //console.log('The session info is');
+    //sessions.shift();
+    //console.log(sessions);
+    res.render("admin", {
+    user: req.user,
+    sessionCookie: req.user.id
+  });});
+
+  app.get("/destroy", isAdmin, (req, res)=>{
+    req.session.destroy();
+    res.redirect("/");
+  })
 }
+
 
 // Route /reminder
 app.use("/reminder", reminderRoute);

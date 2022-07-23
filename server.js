@@ -91,6 +91,7 @@ app.use("/auth", authRoute);
       }
       colLength = length;
 
+      //console.log(req.sessionID);
 
       //console.log('Session store details');
       let sessionsUserPair = [];
@@ -138,7 +139,12 @@ app.use("/auth", authRoute);
 
   app.get("/destroy/:session", isAdmin, (req, res)=>{
     req.sessionStore.destroy(req.params.session);
-    res.redirect("/admin");
+    if(req.params.session != req.sessionID){
+      res.redirect("/admin");
+    }else{
+      // It's admin own session
+      res.redirect("/");
+    }
   })
 }
 

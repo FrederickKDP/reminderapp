@@ -2,10 +2,10 @@
 <h1 class="mt-4">Dashboard</h1>
 <p class="lead mb-3">Welcome <%= user.name %></p>
 <h2>Current Active Sessions:</h2>
-<p class="lead mb-3">SessionID: <% sessionCookie.forEach((item)=>{ %>
-        <br><%= item %>
-    <% }); %> </p>
-<p class="lead mb-3">UserID: <%= user.id %></p>
-<a href="/destroy">Revoke Session</a><br><br>
-
+<% sessions.forEach((session)=>{ %>
+    <br><p class="lead mb-3">SessionID: <%= session.key %></p> 
+    <p class="lead mb-3">UserID: <%= session.id %></p>
+    <a href="/destroy/<%= session.key %>">Revoke Session</a><br>
+<% }) %>
+<br>
 <a href="/auth/logout" class="btn btn-secondary">Logout</a>

@@ -91,38 +91,55 @@ app.use("/auth", authRoute);
       }
       colLength = length;
 
-      req.sessionStore.all((err, s)=>{
-           ++id;
-           if(err){
-              // Abrupt end
-              if(id>=colLength){
-                res.render("admin", {
-                  user: req.user,
-                  sessionCookie: keys
-                });
-              }
-             return null;
-           }
-           if(s){
-            Object.keys(s).forEach((v, index)=>{
-              keys.push(v);
-            });
-           }
-           // End of collection
-           if(id>=colLength){
-              res.render("admin", {
-                user: req.user,
-                sessionCookie: keys
-              });
-           }
-      });
+
+      console.log('Session store details');
+      let sessionsUserPair = [];
+      for(const key in req.sessionStore.sessions){
+        console.log(`${key}: ${JSON.parse(req.sessionStore.sessions[key]).passport.user}`);
+        sessionsUserPair.push({key: key, id: JSON.parse(req.sessionStore.sessions[key]).passport.user});
+      }
+      console.log(sessionsUserPair);
+
+      res.render("admin", {
+                   user: req.user,
+                   sessions: sessionsUserPair
+                 });
+
+      //console.log(req.sessionStore.sessions);
+
+      // req.sessionStore.all((err, s)=>{
+      //      ++id;
+      //      if(err){
+      //         // Abrupt end
+      //         if(id>=colLength){
+      //           res.render("admin", {
+      //             user: req.user,
+      //             sessionCookie: keys
+      //           });
+      //         }
+      //        return null;
+      //      }
+      //      if(s){
+      //       Object.keys(s).forEach((v, index)=>{
+      //         keys.push(v);
+      //       });
+      //      }
+      //      // End of collection
+      //      if(id>=colLength){
+      //         res.render("admin", {
+      //           user: req.user,
+      //           sessionCookie: keys
+      //         });
+      //      }
+      // });
 
     });
   });
 
-  app.get("/destroy", isAdmin, (req, res)=>{
-    req.session.destroy();
-    res.redirect("/");
+  app.get("/destroy/:session", isAdmin, (req, res)=>{
+    //req.session.destroy();
+    req.sessionStore.destroy(req.params.session);
+    res.redirect("/admin");
   })
 }
 

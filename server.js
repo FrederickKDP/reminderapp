@@ -92,13 +92,13 @@ app.use("/auth", authRoute);
       colLength = length;
 
 
-      console.log('Session store details');
+      //console.log('Session store details');
       let sessionsUserPair = [];
       for(const key in req.sessionStore.sessions){
-        console.log(`${key}: ${JSON.parse(req.sessionStore.sessions[key]).passport.user}`);
+        //console.log(`${key}: ${JSON.parse(req.sessionStore.sessions[key]).passport.user}`);
         sessionsUserPair.push({key: key, id: JSON.parse(req.sessionStore.sessions[key]).passport.user});
       }
-      console.log(sessionsUserPair);
+      //console.log(sessionsUserPair);
 
       res.render("admin", {
                    user: req.user,
@@ -137,7 +137,6 @@ app.use("/auth", authRoute);
   });
 
   app.get("/destroy/:session", isAdmin, (req, res)=>{
-    //req.session.destroy();
     req.sessionStore.destroy(req.params.session);
     res.redirect("/admin");
   })

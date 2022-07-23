@@ -82,26 +82,43 @@ app.use("/auth", authRoute);
   app.get("/reminders", ensureAuthenticated, reminderController.list);
   app.get("/admin", isAdmin, (req, res)=>
   {
-    // const keys = req.sessionStore.all((err, s)=>{
-    //   if(err){
-    //     return null;
-    //   }
-    //   if(s){
-    //     return Object.keys(s);
-    //   }
-    // });
+    const keys = [];
+    let colLength = 0;
+    let id = 1; //first one is undefined, so skip it
+    req.sessionStore.length((err, length)=>{
+      if(err){
+        return null;
+      }
+      colLength = length;
 
-    // Clean undefined
+      req.sessionStore.all((err, s)=>{
+           ++id;
+           if(err){
+              // Abrupt end
+              if(id>=colLength){
+                res.render("admin", {
+                  user: req.user,
+                  sessionCookie: keys
+                });
+              }
+             return null;
+           }
+           if(s){
+            Object.keys(s).forEach((v, index)=>{
+              keys.push(v);
+            });
+           }
+           // End of collection
+           if(id>=colLength){
+              res.render("admin", {
+                user: req.user,
+                sessionCookie: keys
+              });
+           }
+      });
 
-    //const sessions = keys.forEach((item)=>{ if(item){return item}});
-
-    //console.log('The session info is');
-    //sessions.shift();
-    //console.log(sessions);
-    res.render("admin", {
-    user: req.user,
-    sessionCookie: req.user.id
-  });});
+    });
+  });
 
   app.get("/destroy", isAdmin, (req, res)=>{
     req.session.destroy();
